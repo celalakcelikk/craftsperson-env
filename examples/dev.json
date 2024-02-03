@@ -1,0 +1,14 @@
+{
+    "version": "2.0",
+    "application": {
+      "name": "MyWebApp",
+      "version": "1.2.3",
+      "environment": "production",
+      "base_url": "https://mywebapp.example.com",
+      "allowed_hosts": ["mywebapp.example.com", "api.mywebapp.example.com"],
+      "options": {
+        "use_ssl": true,
+        "ssl_cert": "/path/to/cert"
+      }
+    }
+}

@@ -1,0 +1,6 @@
+python-dotenv
+PyYAML
+setuptools
+toml
+validators
+xmltodict
