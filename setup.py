@@ -22,7 +22,7 @@ setup(
     install_requires=requirements_list,
     license="MIT",
     classifiers=[
-        "Development Status :: 1 - Production/Stable",
+        "Development Status :: 5 - Production/Stable",
         "Natural Language :: English",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.8",
