@@ -626,7 +626,7 @@ key_list
 # Get the Value From the 'os.environ' System
 
 **Description**
-
+```
 Help on function get in module craftsperson_env.__main__:
 
 get(key: str, value_type: Any = <class 'str'>, default: Any = None) -> str
@@ -646,7 +646,7 @@ get(key: str, value_type: Any = <class 'str'>, default: Any = None) -> str
     -------
     value:
         This returns the value of the given environment variable key.
-
+```
 
 Additionally, it specifies the data type when retrieving data from 'os.environ' to access data of that type. For example, value_type gets int, float, str, dict and other types.
 
@@ -665,7 +665,7 @@ print("json:", config.get(key="json_format", value_type=dict, default=None))
 # Set and Update the Value in the 'os.environ' System.
 
 **Description**
-
+```
 Help on function set in module craftsperson_env.__main__:
 
 set(key: str, value: str) -> None
@@ -682,7 +682,7 @@ set(key: str, value: str) -> None
     Returns
     -------
     None.
-
+```
 
 ```python
 config.set(key="int_value", value="1923")
