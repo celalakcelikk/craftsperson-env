@@ -14,4 +14,7 @@
       <ssl_cert>/path/to/cert</ssl_cert>
     </options>
   </application>
+  <json_format>
+    {'test': 1}
+  </json_format>
 </config>

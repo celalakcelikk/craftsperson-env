@@ -32,8 +32,9 @@ class CraftsEnvConfig:
     def __init__(self):
         self.__naming_case_type = "upper-flat"
         self.__naming_case_join_type = ""
-        self.__upper_lower = "upper"
         self.__is_remove_xml_first_level = False
+        self.__is_change_config_env_format = False
+        self.__config_env_replace_first_value = None
         self.__extra_config_file_params = {}
 
     @staticmethod
@@ -62,36 +63,18 @@ class CraftsEnvConfig:
         Parameters
         ----------
         naming_case_type: str
-            This parameter accepts naming case types, including pascal, camel, snake, kebab, flat, upper-flat,
-                pascal-snake, camel-snake, screaming-snake, train, or cobol.
+            This parameter accepts naming case types and other configuration name types, including pascal, camel,
+                snake, kebab, flat, upper-flat, pascal-snake, camel-snake, screaming-snake,
+                train, cobol, upper or lower.
 
         Returns
         -------
         None.
         """
-        is_naming_case_type_true = naming_case_type in NAMING_CASE_LIST
-        is_not_other_config_name_type_true = naming_case_type not in OTHER_CONFIG_NAME_TYPE_LIST
-        assert is_naming_case_type_true is True or is_not_other_config_name_type_true is True, \
-            f"Enter a case type that is not valid. Approved case types: {', '.join(NAMING_CASE_LIST)}"
-
-    @staticmethod
-    def __check_other_config_name_type(upper_lower: str) -> None:
-        """
-        This function checks other config name types.
-
-        Parameters
-        ----------
-        upper_lower: str
-            This parameter accepts other configuration name types, either in upper or lower case.
-
-        Returns
-        -------
-        None.
-        """
-        is_other_config_name_type_true = upper_lower in OTHER_CONFIG_NAME_TYPE_LIST
-        assert is_other_config_name_type_true is True, \
-            (f"Enter another config name type that is not valid. Approved case types: " +
-             f"{', '.join(OTHER_CONFIG_NAME_TYPE_LIST)}")
+        case_list = NAMING_CASE_LIST + OTHER_CONFIG_NAME_TYPE_LIST
+        is_naming_case_type_true = naming_case_type in case_list
+        assert is_naming_case_type_true is True, \
+            f"Enter a case type that is not valid. Approved case types: {', '.join(case_list)}"
 
     @staticmethod
     def __add_base_path(file_path: str, root_full_path: str) -> str:
@@ -132,7 +115,7 @@ class CraftsEnvConfig:
         return variable: str
             The return value is arranged by naming case type.
         """
-        if self.__naming_case_type is not OTHER_CONFIG_NAME_TYPE_LIST and self.__naming_case_type is not None:
+        if self.__naming_case_type not in OTHER_CONFIG_NAME_TYPE_LIST and self.__naming_case_type in NAMING_CASE_LIST:
             if self.__naming_case_type == "pascal":
                 return "".join([key.capitalize() for key in key_list])
 
@@ -167,10 +150,10 @@ class CraftsEnvConfig:
                 return "-".join(key_list).upper()
 
         else:
-            if self.__upper_lower == "upper":
+            if self.__naming_case_type == "upper":
                 return self.__naming_case_join_type.join(key_list).upper()
 
-            elif self.__upper_lower == "lower":
+            elif self.__naming_case_type == "lower":
                 return self.__naming_case_join_type.join(key_list).lower()
 
     def __add_config_env(self, data: Any, keys: list = []):
@@ -213,8 +196,7 @@ class CraftsEnvConfig:
                 else:
                     os.environ[env_key] = f'{value}'
 
-    @staticmethod
-    def __load_env_config_file(file_path: str):
+    def __load_env_config_file(self, file_path: str):
         """
         This function loads env file to the 'os.environ' system.
 
@@ -227,7 +209,23 @@ class CraftsEnvConfig:
         -------
         None.
         """
-        load_dotenv(file_path)
+        if self.__is_change_config_env_format:
+            with open(file_path, "r") as f:
+                config_env = f.read().strip().split("\n")
+
+            config_dict = {}
+            for c in config_env:
+                split_list = c.split("=")
+                key = split_list[0].replace(self.__config_env_replace_first_value,
+                                            self.__naming_case_join_type) \
+                    if self.__config_env_replace_first_value is not None else split_list[0]
+                value = split_list[1]
+                config_dict[key] = value
+
+            self.__add_config_env(config_dict)
+
+        else:
+            load_dotenv(file_path)
 
     def __load_yaml_config_file(self, file_path: str):
         """
@@ -303,7 +301,8 @@ class CraftsEnvConfig:
                          root_full_path: str = "./",
                          naming_case_type: str = None,
                          naming_case_join_type: str = "",
-                         upper_lower: str = None,
+                         is_change_config_env_format: bool = False,
+                         config_env_replace_first_value: str = None,
                          is_remove_xml_first_level: bool = False,
                          extra_config_file_params: dict = {}):
         """
@@ -319,10 +318,13 @@ class CraftsEnvConfig:
             This parameter specifies naming case types for env, yaml, json, xml, or toml. The default is None.
         naming_case_join_type : str, optional.
             This parameter specifies the join type, allowing values such as "", "-", or "_". The default is "".
-        upper_lower : str, optional
-            This parameter specifies other config file types, either in upper or lower case. The default is "upper".
+        is_change_config_env_format: bool, optional.
+            This parameter specifies whether the format of the env config file has been changed.
+                The default value is False.
+        config_env_replace_first_value: str, optional.
+            This parameter specifies the replacement value for the first occurrence. The default is None.
         is_remove_xml_first_level : bool, optional
-            This parameter determines whether to remove the first level, with the default value being False.
+            This parameter determines whether to remove the first level. The default value is False.
         extra_config_file_params : dict, optional
             This parameter retrieves additional XML or TOML configuration parameters. The default value is {}.
 
@@ -333,11 +335,11 @@ class CraftsEnvConfig:
         self.__check_config_type(file_path=file_path)
         file_path = self.__add_base_path(file_path=file_path, root_full_path=root_full_path)
         self.__check_naming_case_type(naming_case_type=naming_case_type)
-        self.__check_other_config_name_type(upper_lower=upper_lower)
 
         self.__naming_case_type = naming_case_type
         self.__naming_case_join_type = naming_case_join_type
-        self.__upper_lower = upper_lower
+        self.__is_change_config_env_format = is_change_config_env_format
+        self.__config_env_replace_first_value = config_env_replace_first_value
         self.__is_remove_xml_first_level = is_remove_xml_first_level
         self.__extra_config_file_params = extra_config_file_params
 

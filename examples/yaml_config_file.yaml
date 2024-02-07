@@ -10,3 +10,4 @@ application:
   options:
     use_ssl: true
     ssl_cert: "/path/to/cert"
+json_format: "{'test': 1}"

@@ -4,5 +4,4 @@ NAMING_CASE_LIST = ["pascal", "camel", "snake", "kebab", "flat",
                     "upper-flat", "pascal-snake", "camel-snake",
                     "screaming-snake", "train", "cobol"]
 
-OTHER_CONFIG_NAME_TYPE_LIST = ["upper",
-                               "lower"]
+OTHER_CONFIG_NAME_TYPE_LIST = ["upper", "lower"]

@@ -1,6 +1,6 @@
-python-dotenv
-PyYAML
+python-dotenv>=1.0.1
+PyYAML>=6.0.1
 setuptools
-toml
-validators
-xmltodict
+toml>=0.10.2
+validators>=0.22.0
+xmltodict>=0.13.0

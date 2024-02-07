@@ -1,4 +1,4 @@
 """
 This file imports classes and functions.
 """
-from .main import CraftsEnvConfig
+from .__main__ import CraftsEnvConfig
