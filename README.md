@@ -1,11 +1,7 @@
 # Craftsperson Environment
 
----
-
 # What is it?
-**craftsperson_env** reads configuration files in **yaml**, **env**, **toml**, **xml**, and **json** formats and adds them to the **'os.environ'** system. It formats the keys according to **naming-case-type**, **upper** or **lower**, and arranges them with a **specific join type in the upper-lower section**. Additionally, it specifies the data type when retrieving data from 'os.environ' to access data of that type. 
-
----
+**craftsperson_env** reads configuration files in **yaml**, **env**, **toml**, **xml**, and **json** formats and adds them to the **'os.environ'** system. It formats the keys according to **naming-case-type**, **upper** or **lower**, and arranges them with a **specific join type in the upper-lower section**. Additionally, it specifies the data type when retrieving data from 'os.environ' to access data of that type.
 
 # Where to get it
 You can access the <a href="https://github.com/celalakcelikk/craftsperson-env">Github</a> repository from here.
@@ -33,7 +29,7 @@ config = CraftsEnvConfig()
 
 # Load File
 **Description**
-
+```
 Help on method load_config_file in module craftsperson_env.main:
 
 load_config_file(file_path: str, root_full_path: str = './', naming_case_type: str = None, naming_case_join_type: str = '', is_change_config_env_format: bool = False, config_env_replace_first_value: str = None, is_remove_xml_first_level: bool = False, extra_config_file_params: dict = {}) method of craftsperson_env.main.CraftsEnvConfig instance
@@ -62,6 +58,7 @@ load_config_file(file_path: str, root_full_path: str = './', naming_case_type: s
     Returns
     -------
     None.
+```
 
 ## Yaml File Use Case
 ```
