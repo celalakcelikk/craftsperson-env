@@ -35,7 +35,7 @@ setup(
     keywords=[
         "environment",
         "PyYAML",
-        "yaml"
+        "yaml",
         "toml",
         "env",
         "json",
