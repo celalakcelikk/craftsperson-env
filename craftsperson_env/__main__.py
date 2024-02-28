@@ -417,4 +417,4 @@ class CraftsEnvConfig:
         -------
         None.
         """
-        os.environ[key] = value
+        os.environ[key] = str(value)
