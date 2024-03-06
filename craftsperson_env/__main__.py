@@ -389,7 +389,7 @@ class CraftsEnvConfig:
         if value is None:
             value = None
 
-        elif value_type != list:
+        elif value_type not in [list, bool]:
             value = value_type(value)
 
         try:
