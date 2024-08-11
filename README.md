@@ -265,8 +265,9 @@ APPLICATION_ALLOWED_HOSTS=mywebapp.example.com,api.mywebapp.example.com
 APPLICATION_OPTIONS_USE_SSL=true
 APPLICATION_OPTIONS_SSL_CERT=/path/to/cert
 JSON_FORMAT="{'test': 1}"
-The **is_change_config_env_format** default value is **False**.
 ```
+The **is_change_config_env_format** default value is **False**.
+
 ```python
 config.load_config_file(
     file_path="env_config_file.env",
