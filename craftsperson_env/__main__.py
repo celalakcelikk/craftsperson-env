@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 
 from craftsperson_env.utils.base_config import BaseConfigClass
 from craftsperson_env.utils.convert_naming_case_type import convert_naming_case_type
+from craftsperson_env.utils.pather import add_base_path
 
 
 class CraftsEnvConfig(BaseConfigClass):
@@ -77,74 +78,6 @@ class CraftsEnvConfig(BaseConfigClass):
                 else:
                     os.environ[env_key] = f'{value}'
 
-    def __load_yaml_config_file(self, file_path: str):
-        """
-        This function loads yaml file to the 'os.environ' system.
-
-        Parameters
-        ----------
-        file_path: str
-            This parameter specifies the file location path.
-
-        Returns
-        -------
-        None.
-        """
-        with open(file_path, 'r') as file:
-            config_dict = yaml.safe_load(file)
-        self.__add_config_env(config_dict)
-
-    def __load_json_config_file(self, file_path: str):
-        """
-        This function loads json file to the 'os.environ' system.
-
-        Parameters
-        ----------
-        file_path: str
-            This parameter specifies the file location path.
-
-        Returns
-        -------
-        None.
-        """
-        with open(file_path, 'r') as file:
-            config_dict = json.load(file)
-        self.__add_config_env(config_dict)
-
-    def __load_xml_config_file(self, file_path: str):
-        """
-        This function loads xml file to the 'os.environ' system.
-
-        Parameters
-        ----------
-        file_path: str
-            This parameter specifies the file location path.
-
-        Returns
-        -------
-        None.
-        """
-        with open(file_path, 'r') as file:
-            config_dict = xmltodict.parse(file.read(), **self.__extra_config_file_params)
-        self.__add_config_env(config_dict)
-
-    def __load_toml_config_file(self, file_path: str):
-        """
-        This function loads toml file to the 'os.environ' system.
-
-        Parameters
-        ----------
-        file_path: str
-            This parameter specifies the file location path.
-
-        Returns
-        -------
-        None.
-
-        """
-        with open(file_path, 'r') as file:
-            config_dict = toml.load(file, **self.__extra_config_file_params)
-        self.__add_config_env(config_dict)
 
     def load_config_file(self,
                          file_path: str,
@@ -182,16 +115,14 @@ class CraftsEnvConfig(BaseConfigClass):
         -------
         None.
         """
-        self.__check_config_type(file_path=file_path)
-        file_path = self.__add_base_path(file_path=file_path, root_full_path=root_full_path)
-        self.__check_naming_case_type(naming_case_type=naming_case_type)
+        self.checker.check_config_type(file_path=file_path)
+        self.checker.check_naming_case_type(naming_case_type=naming_case_type)
+        file_path = add_base_path(file_path=file_path, root_full_path=root_full_path)
 
-        self.__naming_case_type = naming_case_type
-        self.__naming_case_join_type = naming_case_join_type
-        self.__is_change_config_env_format = is_change_config_env_format
-        self.__config_env_replace_first_value = config_env_replace_first_value
-        self.__is_remove_xml_first_level = is_remove_xml_first_level
-        self.__extra_config_file_params = extra_config_file_params
+        is_change_config_env_format = is_change_config_env_format
+        config_env_replace_first_value = config_env_replace_first_value
+        is_remove_xml_first_level = is_remove_xml_first_level
+        extra_config_file_params = extra_config_file_params
 
         if file_path.endswith("env"):
             self.__is_remove_xml_first_level = False
