@@ -18,6 +18,10 @@ def add_base_path(file_path: str, root_full_path: str) -> str:
 
     if file_path.startswith("./"):
         file_path = file_path.replace('./', root_full_path + '/')
+
+    elif file_path.startswith("./") is False:
+        file_path = root_full_path+file_path
+
     else:
         file_path = f"{root_full_path}/{file_path}"
 

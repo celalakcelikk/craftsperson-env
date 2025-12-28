@@ -1,7 +1,6 @@
-stringcase==1.2.0
+stringcase>=1.0.0
 python-dotenv>=1.0.0
 PyYAML>=6.0.1
-setuptools
 toml>=0.10.2
 validators>=0.22.0
 xmltodict>=0.13.0

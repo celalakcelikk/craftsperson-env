@@ -12,7 +12,7 @@ with open("requirements.txt", encoding="utf-8") as requirements_file:
 
 setup(
     name="craftsperson-env",
-    version="1.0.4",
+    version="1.0.5",
     packages=find_packages(),
     long_description=readme,
     long_description_content_type="text/markdown",

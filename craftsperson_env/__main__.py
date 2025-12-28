@@ -1,6 +1,7 @@
 """
 This file serves as the main class.
 """
+
 import json
 import os
 from typing import Any
@@ -12,7 +13,8 @@ from dotenv import load_dotenv
 
 from craftsperson_env.utils.base_config import BaseConfigClass
 from craftsperson_env.utils.convert_naming_case_type import convert_naming_case_type
-from craftsperson_env.utils.pather import add_base_path
+from craftsperson_env.utils.path_modifier import add_base_path
+from craftsperson_env.utils.load_config_file import LoadConfigFile
 
 
 class CraftsEnvConfig(BaseConfigClass):
@@ -35,6 +37,7 @@ class CraftsEnvConfig(BaseConfigClass):
         self.__is_change_config_env_format = False
         self.__config_env_replace_first_value = None
         self.__extra_config_file_params = {}
+        self.__load_config_file = LoadConfigFile()
 
     def __add_config_env(self, data: Any, keys: list = []):
         """
@@ -67,27 +70,30 @@ class CraftsEnvConfig(BaseConfigClass):
                 self.__add_config_env(value, key_list)
 
             else:
-                key_list = key_list[1:] if self.__is_remove_xml_first_level else key_list
-                env_key = convert_naming_case_type(key_list=key_list,
-                                                   naming_case_type=self.naming_case_type,
-                                                   naming_case_join_type=self.naming_case_join_type)
-
+                key_list = (
+                    key_list[1:] if self.__is_remove_xml_first_level else key_list
+                )
+                env_key = convert_naming_case_type(
+                    key_list=key_list,
+                    naming_case_type=self.naming_case_type,
+                    naming_case_join_type=self.naming_case_join_type,
+                )
                 if isinstance(value, dict):
                     os.environ[env_key] = f'"{value}"'
-
                 else:
-                    os.environ[env_key] = f'{value}'
+                    os.environ[env_key] = f"{value}"
 
-
-    def load_config_file(self,
-                         file_path: str,
-                         root_full_path: str = "./",
-                         naming_case_type: str = None,
-                         naming_case_join_type: str = "",
-                         is_change_config_env_format: bool = False,
-                         config_env_replace_first_value: str = None,
-                         is_remove_xml_first_level: bool = False,
-                         extra_config_file_params: dict = {}):
+    def load_config_file(
+        self,
+        file_path: str,
+        root_full_path: str = "./",
+        naming_case_type: str = None,
+        naming_case_join_type: str = "",
+        is_change_config_env_format: bool = False,
+        config_env_replace_first_value: str = None,
+        is_remove_xml_first_level: bool = False,
+        extra_config_file_params: dict = {},
+    ):
         """
         This function processes and uses a config file.
 
@@ -119,29 +125,48 @@ class CraftsEnvConfig(BaseConfigClass):
         self.checker.check_naming_case_type(naming_case_type=naming_case_type)
         file_path = add_base_path(file_path=file_path, root_full_path=root_full_path)
 
-        is_change_config_env_format = is_change_config_env_format
-        config_env_replace_first_value = config_env_replace_first_value
-        is_remove_xml_first_level = is_remove_xml_first_level
-        extra_config_file_params = extra_config_file_params
+        # Set naming case attributes
+        self.naming_case_type = naming_case_type
+        self.naming_case_join_type = naming_case_join_type
+        self.__is_remove_xml_first_level = is_remove_xml_first_level
+        self.__extra_config_file_params = extra_config_file_params
 
         if file_path.endswith("env"):
             self.__is_remove_xml_first_level = False
-            self.__load_env_config_file(file_path=file_path)
+            config_dict = self.__load_config_file.load_diff_type_env_config_file(
+                file_path=file_path,
+                config_env_replace_first_value=config_env_replace_first_value,
+                naming_case_join_type=naming_case_join_type,
+            )
+            self.__add_config_env(config_dict)
 
         elif file_path.endswith("yaml"):
             self.__is_remove_xml_first_level = False
-            self.__load_yaml_config_file(file_path=file_path)
+            config_dict = self.__load_config_file.load_yaml_config_file(
+                file_path=file_path
+            )
+            self.__add_config_env(config_dict)
 
         elif file_path.endswith("json"):
             self.__is_remove_xml_first_level = False
-            self.__load_json_config_file(file_path=file_path)
+            config_dict = self.__load_config_file.load_json_config_file(
+                file_path=file_path
+            )
+            self.__add_config_env(config_dict)
 
         elif file_path.endswith("xml"):
-            self.__load_xml_config_file(file_path=file_path)
+            self.__is_remove_xml_first_level = False
+            config_dict = self.__load_config_file.load_xml_config_file(
+                file_path=file_path
+            )
+            self.__add_config_env(config_dict)
 
         elif file_path.endswith("toml"):
             self.__is_remove_xml_first_level = False
-            self.__load_toml_config_file(file_path=file_path)
+            config_dict = self.__load_config_file.load_toml_config_file(
+                file_path=file_path
+            )
+            self.__add_config_env(config_dict)
 
     @staticmethod
     def get(key: str, value_type: Any = str, default: Any = None) -> Any:
@@ -194,7 +219,7 @@ class CraftsEnvConfig(BaseConfigClass):
         elif value_type == bool:
             if isinstance(value, bool):
                 return value
-            return str(value).lower() in ('true', '1', 'yes')
+            return str(value).lower() in ("true", "1", "yes")
 
         elif value_type == list:
             try:
@@ -202,7 +227,7 @@ class CraftsEnvConfig(BaseConfigClass):
                 return json.loads(json_value.replace("'", '"'))
             except (json.JSONDecodeError, AttributeError):
                 # Fallback: split by comma
-                return [item.strip() for item in value.split(',')]
+                return [item.strip() for item in value.split(",")]
 
         elif value_type == str:
             return str(value)
