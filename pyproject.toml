@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "craftsperson-env"
-version = "1.0.0"
-description = "a"
+version = "1.0.4"
+description = "A configuration file parser for yaml, env, toml, xml, and json formats"
 authors = ["Celal Akçelik <celalakcelikk@gmail.com>"]
 license = "MIT"
 readme = "README.md"

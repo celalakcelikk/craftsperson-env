@@ -1,4 +1,4 @@
-from craftsperson_env import OTHER_CONFIG_NAME_TYPE_LIST, NAMING_CASE_LIST
+from craftsperson_env.utils.contraster import OTHER_CONFIG_NAME_TYPE_LIST, NAMING_CASE_LIST
 
 
 def convert_naming_case_type(key_list: list,

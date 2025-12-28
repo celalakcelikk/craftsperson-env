@@ -144,7 +144,7 @@ class CraftsEnvConfig(BaseConfigClass):
             self.__load_toml_config_file(file_path=file_path)
 
     @staticmethod
-    def get(key: str, value_type: Any = str, default: Any = None) -> str:
+    def get(key: str, value_type: Any = str, default: Any = None) -> Any:
         """
         This function retrieves the value associated with the key from the 'os.environ' system.
 
@@ -152,34 +152,66 @@ class CraftsEnvConfig(BaseConfigClass):
         ----------
         key: str
             This parameter retrieves the key from the 'os.environ' system.
-        value_type: str, optional.
-            This parameter accepts value types such as int, str, list, dict, and others. The default value is str.
+        value_type: Any, optional.
+            This parameter accepts value types such as int, str, float, list, dict, bool and others.
+            The default value is str.
         default: Any, optional.
             This parameter retrieves the default value if the key is not found in any environment variables.
                 The default is None.
 
         Returns
         -------
-        value:
-            This returns the value of the given environment variable key.
+        value: Any
+            This returns the value of the given environment variable key with the specified type.
         """
-        value = os.getenv(key, default)
-        value_type = json.loads if value_type == dict and (
-                default not in [{}, None] or value not in [{}, None]) else value_type
+        value = os.getenv(key, None)
 
+        # Return default if key not found
         if value is None:
-            value = None
+            return default
 
-        elif value_type not in [list, bool]:
-            value = value_type(value)
+        # Type conversion based on value_type
+        if value_type == dict:
+            try:
+                # Handle both single and double quotes in JSON strings
+                json_value = value.strip().strip('"').strip("'")
+                return json.loads(json_value.replace("'", '"'))
+            except (json.JSONDecodeError, AttributeError):
+                return default
 
+        elif value_type == float:
+            try:
+                return float(value)
+            except (ValueError, TypeError):
+                return default
+
+        elif value_type == int:
+            try:
+                return int(float(value))  # Handle "2.0" -> 2
+            except (ValueError, TypeError):
+                return default
+
+        elif value_type == bool:
+            if isinstance(value, bool):
+                return value
+            return str(value).lower() in ('true', '1', 'yes')
+
+        elif value_type == list:
+            try:
+                json_value = value.strip().strip('"').strip("'")
+                return json.loads(json_value.replace("'", '"'))
+            except (json.JSONDecodeError, AttributeError):
+                # Fallback: split by comma
+                return [item.strip() for item in value.split(',')]
+
+        elif value_type == str:
+            return str(value)
+
+        # For any other type, try direct conversion
         try:
-            value = eval(value)
-
-        except Exception:
-            pass
-
-        return value
+            return value_type(value)
+        except (ValueError, TypeError):
+            return default
 
     @staticmethod
     def set(key: str, value: str) -> None:
